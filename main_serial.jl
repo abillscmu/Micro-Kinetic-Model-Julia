@@ -1,24 +1,24 @@
-@everywhere using DifferentialEquations
-@everywhere using Sundials
-using DelimitedFiles
-@everywhere include("rate_equations.jl")
-@everywhere include("datastructures.jl")
-using SharedArrays
+using DifferentialEquations
+using Sundials
 
-num_runs = 10000
+include("rate_equations.jl")
+include("datastructures.jl")
+function main_serial()
+
+
 num_points=50
-o2dl=SharedArray{Float64,2}(num_points,num_runs)
-stara=SharedArray{Float64,2}(num_points,num_runs)
-o2stara=SharedArray{Float64,2}(num_points,num_runs)
-theta_oohstarA=SharedArray{Float64,2}(num_points,num_runs)
-theta_ostarA=SharedArray{Float64,2}(num_points,num_runs)
-theta_ohstarA=SharedArray{Float64,2}(num_points,num_runs)
-theta_h2o2starA=SharedArray{Float64,2}(num_points,num_runs)
-theta_ohstarB=SharedArray{Float64,2}(num_points,num_runs)
-theta_starB=SharedArray{Float64,2}(num_points,num_runs)
-theta_ostarB=SharedArray{Float64,2}(num_points,num_runs)
+o2dl=Array{Float64,1}(undef,num_points)
+stara=Array{Float64,1}(undef,num_points)
+o2stara=Array{Float64,1}(undef,num_points)
+theta_oohstarA=Array{Float64,1}(undef,num_points)
+theta_ostarA=Array{Float64,1}(undef,num_points)
+theta_ohstarA=Array{Float64,1}(undef,num_points)
+theta_h2o2starA=Array{Float64,1}(undef,num_points)
+theta_ohstarB=Array{Float64,1}(undef,num_points)
+theta_starB=Array{Float64,1}(undef,num_points)
+theta_ostarB=Array{Float64,1}(undef,num_points)
 
-for r = 1:num_runs
+
     U_vec = range(0.2,stop=1,length=num_points);
     h=4.14e-15
     #Calculation of Rate Constants
@@ -80,7 +80,7 @@ for r = 1:num_runs
 
 
     #Potential: Input
-    @sync @distributed for n = 1:num_points
+for n = 1:num_points
         U = U_vec[n]
 
         k_pos[1] = (8 .* (10 .^ 5)) .* exp.(-E_1 ./ kbT )
@@ -140,23 +140,28 @@ for r = 1:num_runs
         du_0 = [0.0,.1,.1,.1,.1,.1,0.1,.1,0.1,0.1]
 
         prob = DAEProblem(rate_equations,du_0,u_0,tspan,p,differential_vars=diff_variables)
-        sol = solve(prob,IDA(max_num_iters_ic = 10000))
+        sol = solve(prob,IDA(max_num_iters_ic = 1000))
 
-        o2dl[n,r]=sol.u[end][1]
-        stara[n,r]=sol.u[end][2]
-        o2stara[n,r]=sol.u[end][7]
-        theta_oohstarA[n,r]=sol.u[end][4]
-        theta_ostarA[n,r]=sol.u[end][5]
-        theta_ohstarA[n,r]=sol.u[end][6]
-        theta_h2o2starA[n,r]=sol.u[end][3]
+        o2dl[n]=sol.u[end][1]
+        stara[n]=sol.u[end][2]
+        o2stara[n]=sol.u[end][7]
+        theta_oohstarA[n]=sol.u[end][4]
+        theta_ostarA[n]=sol.u[end][5]
+        theta_ohstarA[n]=sol.u[end][6]
+        theta_h2o2starA[n]=sol.u[end][3]
 
-        theta_ohstarB[n,r]=sol.u[end][8]
-        theta_starB[n,r]=sol.u[end][10]
-        theta_ostarB[n,r]=sol.u[end][9]
+        theta_ohstarB[n]=sol.u[end][8]
+        theta_starB[n]=sol.u[end][10]
+        theta_ostarB[n]=sol.u[end][9]
 
-    end
+end
 
-        println("ITERATION")
-        println(r)
-
+#using Plots
+#plot(U_vec,o2dl,scale=:log10,lw=3,label="o2dl",color=:green)
+#plot!(U_vec,stara,scale=:log10,lw=3,label="*a",color=:red)
+#plot!(U_vec,o2stara,scale=:log10,lw=3,label="o2*a",color=:blue)
+#plot!(U_vec,theta_oohstarA,scale=:log10,lw=3,label="ooh*a",color=:cyan)
+#plot!(U_vec,theta_ostarA,scale=:log10,lw=3,label="o*a",color=:purple)
+#plot!(U_vec,theta_ohstarA,scale=:log10,lw=3,label="oh*a",color=:gold)
+#plot!(U_vec,theta_h2o2starA,scale=:log10,lw=3,label="h2o2*a",legend=:bottomleft,color=:black)
 end
