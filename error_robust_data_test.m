@@ -1,4 +1,4 @@
-filepath = 'newdata/';
+filepath = 'highmemdatawindows/';
 
 %% Read Data
 o2dl=csvread([filepath 'o2dl.csv']);

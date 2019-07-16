@@ -6,7 +6,7 @@ using DelimitedFiles
 @everywhere include("datastructures.jl")
 using SharedArrays
 
-@everywhere num_runs=1000
+@everywhere num_runs=100000
 @everywhere num_points=50
 o2dl=SharedArray{Float64,2}(num_points,num_runs)
 stara=SharedArray{Float64,2}(num_points,num_runs)
@@ -178,16 +178,13 @@ G_Us = Dict("O2aq"=>1.32+dGO2solv,"O2dl"=>1.32+dGO2solv,"O2"=>1.392+(1.2*dGOH),"
         if(r%100==0)
             println("vvvITERATIONvvv")
             println(r)
-            run(`echo ITERATION COMPLETED`)
         end
 
 end
 
 
 
-run(`echo Writing Output Data`)
-
-open("newdata//o2dl.csv","w") do io
+open("newdata/o2dl.csv","w") do io
     writedlm(io,o2dl,',');
 end
 
