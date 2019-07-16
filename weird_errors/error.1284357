@@ -1,0 +1,44 @@
+ERROR: LoadError: On worker 10:
+ReadOnlyMemoryError()
+#696 at ./asyncmap.jl:178
+foreach at ./abstractarray.jl:1866
+maptwice at ./asyncmap.jl:178
+wrap_n_exec_twice at ./asyncmap.jl:154 [inlined]
+#async_usemap#681 at ./asyncmap.jl:103
+#async_usemap at ./none:0 [inlined]
+#asyncmap#680 at ./asyncmap.jl:81 [inlined]
+asyncmap at ./asyncmap.jl:81 [inlined]
+#236 at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/pmap.jl:198
+#exec_from_cache#204 at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/workerpool.jl:337
+exec_from_cache at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/workerpool.jl:337
+#112 at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/process_messages.jl:269
+run_work_thunk at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/process_messages.jl:56
+macro expansion at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/process_messages.jl:269 [inlined]
+#111 at ./task.jl:259
+Stacktrace:
+ [1] (::getfield(Base, Symbol("##696#698")))(::Task) at ./asyncmap.jl:178
+ [2] foreach(::getfield(Base, Symbol("##696#698")), ::Array{Any,1}) at ./abstractarray.jl:1866
+ [3] maptwice(::Function, ::Channel{Any}, ::Array{Any,1}, ::UnitRange{Int64}) at ./asyncmap.jl:178
+ [4] wrap_n_exec_twice at ./asyncmap.jl:154 [inlined]
+ [5] #async_usemap#681(::Function, ::Int64, ::Function, ::getfield(Distributed, Symbol("##234#235")){CachingPool,Bool}, ::UnitRange{Int64}) at ./asyncmap.jl:103
+ [6] #async_usemap at ./none:0 [inlined]
+ [7] #asyncmap#680 at ./asyncmap.jl:81 [inlined]
+ [8] #asyncmap at ./none:0 [inlined]
+ [9] #pmap#215(::Bool, ::Int64, ::Nothing, ::Array{Any,1}, ::Nothing, ::Function, ::Function, ::CachingPool, ::UnitRange{Int64}) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/pmap.jl:144
+ [10] #pmap at ./none:0 [inlined]
+ [11] solve_batch(::MonteCarloProblem{DAEProblem{Array{Float64,1},Array{Float64,1},Tuple{Float64,Float64},true,p_parallel,DAEFunction{true,typeof(rate_equations),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing},Nothing,BitArray{1}},typeof(mc_modifier),getfield(DiffEqBase, Symbol("##282#288")),getfield(DiffEqBase, Symbol("##284#290")),Array{Any,1}}, ::IDA{:Dense,Nothing}, ::MonteDistributed, ::UnitRange{Int64}, ::Int64) at /home/abills/.julia/packages/DiffEqMonteCarlo/nNWZG/src/solve.jl:105
+ [12] macro expansion at /home/abills/.julia/packages/DiffEqMonteCarlo/nNWZG/src/solve.jl:63 [inlined]
+ [13] macro expansion at ./util.jl:213 [inlined]
+ [14] #__solve#2(::Int64, ::Int64, ::Int64, ::Base.Iterators.Pairs{Union{},Union{},Tuple{},NamedTuple{(),Tuple{}}}, ::Function, ::MonteCarloProblem{DAEProblem{Array{Float64,1},Array{Float64,1},Tuple{Float64,Float64},true,p_parallel,DAEFunction{true,typeof(rate_equations),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing},Nothing,BitArray{1}},typeof(mc_modifier),getfield(DiffEqBase, Symbol("##282#288")),getfield(DiffEqBase, Symbol("##284#290")),Array{Any,1}}, ::IDA{:Dense,Nothing}, ::MonteDistributed) at /home/abills/.julia/packages/DiffEqMonteCarlo/nNWZG/src/solve.jl:57
+ [15] (::getfield(DiffEqBase, Symbol("#kw##__solve")))(::NamedTuple{(:num_monte,),Tuple{Int64}}, ::typeof(DiffEqBase.__solve), ::MonteCarloProblem{DAEProblem{Array{Float64,1},Array{Float64,1},Tuple{Float64,Float64},true,p_parallel,DAEFunction{true,typeof(rate_equations),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing},Nothing,BitArray{1}},typeof(mc_modifier),getfield(DiffEqBase, Symbol("##282#288")),getfield(DiffEqBase, Symbol("##284#290")),Array{Any,1}}, ::IDA{:Dense,Nothing}, ::MonteDistributed) at ./none:0
+ [16] #solve#353 at /home/abills/.julia/packages/DiffEqBase/nmZZX/src/solve.jl:46 [inlined]
+ [17] (::getfield(DiffEqBase, Symbol("#kw##solve")))(::NamedTuple{(:num_monte,),Tuple{Int64}}, ::typeof(solve), ::MonteCarloProblem{DAEProblem{Array{Float64,1},Array{Float64,1},Tuple{Float64,Float64},true,p_parallel,DAEFunction{true,typeof(rate_equations),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing},Nothing,BitArray{1}},typeof(mc_modifier),getfield(DiffEqBase, Symbol("##282#288")),getfield(DiffEqBase, Symbol("##284#290")),Array{Any,1}}, ::IDA{:Dense,Nothing}, ::MonteDistributed) at ./none:0
+ [18] #main_MC#3(::Bool, ::Bool, ::Function) at /home/abills/kinetic_rate/main_MC.jl:84
+ [19] main_MC() at /home/abills/kinetic_rate/main_MC.jl:13
+ [20] top-level scope at none:0
+ [21] include at ./boot.jl:326 [inlined]
+ [22] include_relative(::Module, ::String) at ./loading.jl:1038
+ [23] include(::Module, ::String) at ./sysimg.jl:29
+ [24] exec_options(::Base.JLOptions) at ./client.jl:267
+ [25] _start() at ./client.jl:436
+in expression starting at /home/abills/kinetic_rate/script_MC.jl:2

@@ -4,3 +4,4 @@
 catmap/
 *.ipynb
 *.ipynb_checkpoints/
+*.jld2

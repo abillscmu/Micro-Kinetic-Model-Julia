@@ -1,0 +1,44 @@
+Job started on c014 at Wed Jun 26 12:23:38 EDT 2019
+Done with Iteration
+1
+Done with Iteration
+2
+      From worker 7:	
+      From worker 7:	signal (11): Segmentation fault
+      From worker 7:	in expression starting at no file:0
+      From worker 7:	N_VGetArrayPointer_Serial at /home/abills/.julia/packages/Sundials/OdI66/deps/usr/lib/libsundials_nvecserial.so (unknown line)
+      From worker 7:	__N_VGetArrayPointer_Serial at /home/abills/.julia/packages/Sundials/OdI66/src/wrapped_api/nvector.jl:116 [inlined]
+      From worker 7:	asarray at /home/abills/.julia/packages/Sundials/OdI66/src/nvector_wrapper.jl:73 [inlined]
+      From worker 7:	Type at /home/abills/.julia/packages/Sundials/OdI66/src/nvector_wrapper.jl:24 [inlined]
+      From worker 7:	convert at /home/abills/.julia/packages/Sundials/OdI66/src/nvector_wrapper.jl:54 [inlined]
+      From worker 7:	IDAInit at /home/abills/.julia/packages/Sundials/OdI66/src/wrapped_api/idas.jl:117
+      From worker 7:	unknown function (ip: 0x7ff8cd3c0ee1)
+      From worker 7:	jl_apply_generic at /buildworker/worker/package_linux64/build/src/gf.c:2219
+      From worker 7:	#__init#58 at /home/abills/.julia/packages/Sundials/OdI66/src/common_interface/solve.jl:816
+      From worker 7:	__init at /home/abills/.julia/packages/Sundials/OdI66/src/common_interface/solve.jl:728
+      From worker 7:	#init#351 at /home/abills/.julia/packages/DiffEqBase/nmZZX/src/solve.jl:20 [inlined]
+      From worker 7:	init at /home/abills/.julia/packages/DiffEqBase/nmZZX/src/solve.jl:8 [inlined]
+      From worker 7:	#__solve#19 at /home/abills/.julia/packages/Sundials/OdI66/src/common_interface/solve.jl:10
+      From worker 7:	unknown function (ip: 0x7ff8cd3ba2a6)
+      From worker 7:	__solve at /home/abills/.julia/packages/Sundials/OdI66/src/common_interface/solve.jl:10 [inlined]
+      From worker 7:	__solve at /home/abills/.julia/packages/Sundials/OdI66/src/common_interface/solve.jl:10 [inlined]
+      From worker 7:	__solve at /home/abills/.julia/packages/Sundials/OdI66/src/common_interface/solve.jl:10 [inlined]
+      From worker 7:	#solve#352 at /home/abills/.julia/packages/DiffEqBase/nmZZX/src/solve.jl:39 [inlined]
+      From worker 7:	solve at /home/abills/.julia/packages/DiffEqBase/nmZZX/src/solve.jl:27 [inlined]
+      From worker 7:	batch_func at /home/abills/.julia/packages/DiffEqMonteCarlo/nNWZG/src/solve.jl:79
+      From worker 7:	#3 at /home/abills/.julia/packages/DiffEqMonteCarlo/nNWZG/src/solve.jl:106 [inlined]
+      From worker 7:	#237 at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/pmap.jl:198 [inlined]
+      From worker 7:	#686 at ./asyncmap.jl:100
+      From worker 7:	unknown function (ip: 0x7ff8cd3b72fc)
+      From worker 7:	jl_apply_generic at /buildworker/worker/package_linux64/build/src/gf.c:2219
+      From worker 7:	jl_apply at /buildworker/worker/package_linux64/build/src/julia.h:1571 [inlined]
+      From worker 7:	jl_f__apply at /buildworker/worker/package_linux64/build/src/builtins.c:556
+      From worker 7:	macro expansion at ./asyncmap.jl:235 [inlined]
+      From worker 7:	#702 at ./task.jl:259
+      From worker 7:	jl_apply_generic at /buildworker/worker/package_linux64/build/src/gf.c:2219
+      From worker 7:	jl_apply at /buildworker/worker/package_linux64/build/src/julia.h:1571 [inlined]
+      From worker 7:	start_task at /buildworker/worker/package_linux64/build/src/task.c:572
+      From worker 7:	unknown function (ip: 0xffffffffffffffff)
+      From worker 7:	Allocations: 135583365 (Pool: 135565606; Big: 17759); GC: 311
+ 
+Job Ended at Wed Jun 26 12:26:55 EDT 2019

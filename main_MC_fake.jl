@@ -3,7 +3,7 @@ using JLD2
 
 @everywhere include("rate_equations.jl")
 @everywhere include("datastructures.jl")
-@everywhere include("mc_modifier.jl")
+@everywhere include("mc_modifier_fake.jl")
 @everywhere using DifferentialEquations
 @everywhere using Sundials
 
@@ -55,7 +55,7 @@ chem_E[6] = 0
 A = 1.0 .* (10 .^ 9)
 
     #Potential: Input
-for n = 1:num_points
+@time for n = 1:num_points
         U = U_vec[n]
 
 
@@ -81,7 +81,7 @@ for n = 1:num_points
 
         prob = DAEProblem(rate_equations,du_0,u_0,tspan,p,differential_vars=diff_variables)
         monte_prob = MonteCarloProblem(prob,prob_func=mc_modifier)
-        sim = solve(monte_prob,IDA(max_num_iters_ic = 100000),MonteDistributed(),num_monte=10000)
+        sim = solve(monte_prob,IDA(max_num_iters_ic = 1000),MonteDistributed(),num_monte=10000)
         sim_arr[n] = MonteCarloSummary(sim)
 
         println("Done with Iteration")
@@ -89,5 +89,5 @@ for n = 1:num_points
 
 end
 
-@save "big_iter.jld2" sim_arr
+@save "test_fake.jld2" sim_arr
 end

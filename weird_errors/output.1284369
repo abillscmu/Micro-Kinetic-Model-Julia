@@ -1,0 +1,24 @@
+Job started on c024 at Wed Jun 26 12:37:01 EDT 2019
+Done with Iteration
+1
+Done with Iteration
+2
+Done with Iteration
+3
+Done with Iteration
+4
+Done with Iteration
+5
+Done with Iteration
+6
+Done with Iteration
+7
+Done with Iteration
+8
+Done with Iteration
+9
+Done with Iteration
+10
+370.520821 seconds (1.17 G allocations: 39.232 GiB, 8.81% gc time)
+ 
+Job Ended at Wed Jun 26 12:44:30 EDT 2019

@@ -1,0 +1,18 @@
+Worker 8 terminated.
+ERROR: LoadError: ProcessExitedException()
+worker_from_id(::Distributed.ProcessGroup, ::Int64) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/cluster.jl:969
+worker_from_id at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/cluster.jl:966 [inlined]
+#remotecall_fetch#152(::Base.Iterators.Pairs{Union{},Union{},Tuple{},NamedTuple{(),Tuple{}}}, ::Function, ::Function, ::Int64, ::Distributed.RRID, ::Vararg{Any,N} where N) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/remotecall.jl:406
+call_on_owner at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/remotecall.jl:406 [inlined]
+wait(::Future) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.1/Distributed/src/remotecall.jl:500
+sync_end(::Array{Any,1}) at ./task.jl:213
+(::getfield(Distributed, Symbol("##169#171")){getfield(Main, Symbol("##3#4")),UnitRange{Int64}})() at ./task.jl:245
+Stacktrace:
+ [1] sync_end(::Array{Any,1}) at ./task.jl:226
+ [2] top-level scope at task.jl:245
+ [3] include at ./boot.jl:326 [inlined]
+ [4] include_relative(::Module, ::String) at ./loading.jl:1038
+ [5] include(::Module, ::String) at ./sysimg.jl:29
+ [6] exec_options(::Base.JLOptions) at ./client.jl:267
+ [7] _start() at ./client.jl:436
+in expression starting at /home/abills/kinetic_rate/main_MC_cluster.jl:23

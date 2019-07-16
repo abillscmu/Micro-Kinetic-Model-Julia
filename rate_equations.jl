@@ -1,7 +1,7 @@
 #Rate Equations
 #Alec Bills, June 10
 #Source: Hansen et. al 2014
-function rate_equations(out,du,u, p, t)
+function rate_equations(du,u, p, t)
 ##########################DECOMPOSE CONSTANTS#################################################
     k=p.k
     #k's
@@ -31,12 +31,12 @@ function rate_equations(out,du,u, p, t)
     k_m11=k[24];
     k_m12=k[25];
     k_m13=k[26];
-    
+
     #x's
     x_o2aq=p.x_o2aq;
     x_h2o=p.x_h2o;
     x_h2o2=p.x_h2o2;
-    
+
 #########################DECOMPOSE PARAMETERS IN THE SOLUTION#################################
     x_o2dl=u[1];
     theta_starA=u[2];
@@ -45,13 +45,13 @@ function rate_equations(out,du,u, p, t)
     theta_ostarA=u[5];
     theta_ohstarA=u[6];
     theta_h2o2starA=u[3];
-    
+
     theta_ohstarB=u[8];
     theta_starB=u[10];
     theta_ostarB=u[9];
-    
 
-    
+
+
 #########################CONSTRUCT EQUATIONS##################################
     dx_o2dldt = ((k_1) .* (x_o2aq)) .- ((k_m1) .* (x_o2dl)) .- ((k_2) .* (x_o2dl) .* (theta_starA)) .+ ((k_m2 .* theta_o2starA)); #Equation 1
 
@@ -73,7 +73,7 @@ function rate_equations(out,du,u, p, t)
 
     dtheta_starBdt = ((k_9) .* (theta_ohstarB)) .- ((k_m9) .* (x_h2o) .* (theta_starB)) .- ((k_7) .*(theta_o2starA) .* (theta_starB)) .+ ((k_m7) .* (theta_ostarA) .* (theta_ostarB)) .- ((k_10) .* (theta_oohstarA) .* (theta_starB)) .+ ((k_m10) .* (theta_ohstarA) .* (theta_ostarB)) .- ((k_12) .* (theta_h2o2starA) .* (theta_starB)) .+ ((k_m12) .* (theta_ohstarA) .* (theta_ohstarB));#Equation 10
 
-    
+
 #######################OUTPUT EQUATIONS IN USABLE FORM (CONSTRUCT DIFFERENTIAL OUTPUT VECTOR) ########################
     out[1]=dx_o2dldt-du[1]
     out[2]=dtheta_starAdt-du[2]
@@ -83,9 +83,14 @@ function rate_equations(out,du,u, p, t)
     out[5]=dtheta_ostarAdt-du[5]
     out[6]=dtheta_ohstarAdt-du[6]
     out[3]=dtheta_h2o2starAdt-du[3]
-    
+
     out[8]=dtheta_ohstarBdt-du[8]
     out[9]=dtheta_ostarBdt-du[9]
     out[10]=u[8]+u[9]+u[10]-1.0
 
+end
+
+
+function prob_func(prob,i)
+    p = prob.f
 end
