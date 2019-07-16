@@ -6,3 +6,6 @@ catmap/
 *.ipynb_checkpoints/
 *.jld2
 *.zip
+error*
+output*
+*.sh
