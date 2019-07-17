@@ -1,7 +1,7 @@
 #Rate Equations
 #Alec Bills, June 10
 #Source: Hansen et. al 2014
-function rate_equations(du,u, p, t)
+function rate_equations(out, du,u, p, t)
 ##########################DECOMPOSE CONSTANTS#################################################
     k=p.k
     #k's
