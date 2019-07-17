@@ -3,7 +3,6 @@
 @everywhere using Sundials
 using DelimitedFiles
 @everywhere include("rate_equations.jl")
-@everywhere include("datastructures.jl")
 using SharedArrays
 
 @everywhere num_runs=100000
@@ -111,19 +110,19 @@ G_Us = Dict("O2aq"=>1.32+dGO2solv,"O2dl"=>1.32+dGO2solv,"O2"=>1.392+(1.2*dGOH),"
 		k_pos[12] =  kbTh * min(1.,exp( - beta * ( 0.462 + 0.19 * (1.4853 + delta_G_12) ) ))
 		k_pos[13] = kbTh * s13 * f0 * min(1.,exp( - beta * ( delta_G_13 ) ))
 
-			K[1] = exp.(- (delta_G_1 ./ kbT))
-			K[2] = exp.(- (delta_G_2 ./ kbT))
-			K[3] = exp.(- ((delta_G_3) ./ kbT))
-			K[4] = exp.(- ((delta_G_4) ./ kbT))
-			K[5] = exp.(- ((delta_G_5) ./ kbT))
-			K[6] = exp.(- ((delta_G_6) ./ kbT))
-			K[7] = exp.(- (delta_G_7 ./ kbT))
-			K[8] = exp.(- ((delta_G_8) ./ kbT))
-			K[9] = exp.(- ((delta_G_9) ./ kbT))
-			K[10] = exp.(- (delta_G_10 ./ kbT))
-			K[11] = exp.(- ((delta_G_11 ./ kbT)))
-			K[12] = exp.(- (delta_G_12 ./ kbT))
-			K[13] = exp.(- (delta_G_13 ./ kbT))
+		K[1] = exp.(- (delta_G_1 ./ kbT))
+		K[2] = exp.(- (delta_G_2 ./ kbT))
+		K[3] = exp.(- ((delta_G_3) ./ kbT))
+		K[4] = exp.(- ((delta_G_4) ./ kbT))
+		K[5] = exp.(- ((delta_G_5) ./ kbT))
+		K[6] = exp.(- ((delta_G_6) ./ kbT))
+		K[7] = exp.(- (delta_G_7 ./ kbT))
+		K[8] = exp.(- ((delta_G_8) ./ kbT))
+		K[9] = exp.(- ((delta_G_9) ./ kbT))
+		K[10] = exp.(- (delta_G_10 ./ kbT))
+		K[11] = exp.(- ((delta_G_11 ./ kbT)))
+		K[12] = exp.(- (delta_G_12 ./ kbT))
+		K[13] = exp.(- (delta_G_13 ./ kbT))
 
         k_neg = k_pos ./ K
 
@@ -139,7 +138,7 @@ G_Us = Dict("O2aq"=>1.32+dGO2solv,"O2dl"=>1.32+dGO2solv,"O2"=>1.392+(1.2*dGOH),"
         #    end
 
         #Creation of parameter object
-        p = p_base(k_init,x_o2aq,x_h2o,x_h2o2);
+        p = vcat(k_init,x_o2aq,x_h2o,x_h2o2);
 
         #Problem setup & Initial Conditions
         diff_variables = trues(10);
@@ -154,20 +153,20 @@ G_Us = Dict("O2aq"=>1.32+dGO2solv,"O2dl"=>1.32+dGO2solv,"O2"=>1.392+(1.2*dGOH),"
         du_0 = [0.0,.1,.1,.1,.1,.1,0.1,.1,0.1,0.1]
 
 
-            prob = DAEProblem(rate_equations,du_0,u_0,tspan,p,differential_vars=diff_variables)
-            sol = solve(prob,IDA(max_num_iters_ic=10000))
+        prob = DAEProblem(rate_equations,du_0,u_0,tspan,p,differential_vars=diff_variables)
+        sol = solve(prob,IDA(max_num_iters_ic=10000))
 
-            o2dl[n,r]=sol.u[end][1]
-            stara[n,r]=sol.u[end][2]
-            o2stara[n,r]=sol.u[end][7]
-            theta_oohstarA[n,r]=sol.u[end][4]
-            theta_ostarA[n,r]=sol.u[end][5]
-            theta_ohstarA[n,r]=sol.u[end][6]
-            theta_h2o2starA[n,r]=sol.u[end][3]
+        o2dl[n,r]=sol.u[end][1]
+        stara[n,r]=sol.u[end][2]
+        o2stara[n,r]=sol.u[end][7]
+        theta_oohstarA[n,r]=sol.u[end][4]
+        theta_ostarA[n,r]=sol.u[end][5]
+        theta_ohstarA[n,r]=sol.u[end][6]
+        theta_h2o2starA[n,r]=sol.u[end][3]
 
-            theta_ohstarB[n,r]=sol.u[end][8]
-            theta_starB[n,r]=sol.u[end][10]
-            theta_ostarB[n,r]=sol.u[end][9]
+        theta_ohstarB[n,r]=sol.u[end][8]
+        theta_starB[n,r]=sol.u[end][10]
+        theta_ostarB[n,r]=sol.u[end][9]
 
 	    timetrack[n,r]=(time_ns()-start_time)/1e9
 

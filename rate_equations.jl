@@ -1,9 +1,8 @@
 #Rate Equations
 #Alec Bills, June 10
 #Source: Hansen et. al 2014
-function rate_equations(out, du,u, p, t)
+function rate_equations(out, du,u, k, t)
 ##########################DECOMPOSE CONSTANTS#################################################
-    k=p.k
     #k's
     k_1=k[1];
     k_2=k[2];
@@ -33,9 +32,9 @@ function rate_equations(out, du,u, p, t)
     k_m13=k[26];
 
     #x's
-    x_o2aq=p.x_o2aq;
-    x_h2o=p.x_h2o;
-    x_h2o2=p.x_h2o2;
+    x_o2aq=k[27];
+    x_h2o=k[28];
+    x_h2o2=k[29];
 
 #########################DECOMPOSE PARAMETERS IN THE SOLUTION#################################
     x_o2dl=u[1];
@@ -88,9 +87,4 @@ function rate_equations(out, du,u, p, t)
     out[9]=dtheta_ostarBdt-du[9]
     out[10]=u[8]+u[9]+u[10]-1.0
 
-end
-
-
-function prob_func(prob,i)
-    p = prob.f
 end
