@@ -2,7 +2,6 @@ using DifferentialEquations
 using Sundials
 using Plots
 include("rate_equations.jl")
-include("datastructures.jl")
 function main_serial(;bigPlot=false,smallPlot=false)
 
 
@@ -94,19 +93,19 @@ for n = 1:num_points
         k_pos[12] =  kbTh * min(1.,exp( - beta * ( 0.462 + 0.19 * (1.4853 + delta_G_12) ) ))
         k_pos[13] = kbTh * s13 * f0 * min(1.,exp( - beta * ( delta_G_13 ) ))
 
-            K[1] = exp.(- (delta_G_1 ./ kbT))
-            K[2] = exp.(- (delta_G_2 ./ kbT))
-            K[3] = exp.(- ((delta_G_3) ./ kbT))
-            K[4] = exp.(- ((delta_G_4) ./ kbT))
-            K[5] = exp.(- ((delta_G_5) ./ kbT))
-            K[6] = exp.(- ((delta_G_6) ./ kbT))
-            K[7] = exp.(- (delta_G_7 ./ kbT))
-            K[8] = exp.(- ((delta_G_8) ./ kbT))
-            K[9] = exp.(- ((delta_G_9) ./ kbT))
-            K[10] = exp.(- (delta_G_10 ./ kbT))
-            K[11] = exp.(- ((delta_G_11 ./ kbT)))
-            K[12] = exp.(- (delta_G_12 ./ kbT))
-            K[13] = exp.(- (delta_G_13 ./ kbT))
+        K[1] = exp.(- (delta_G_1 ./ kbT))
+        K[2] = exp.(- (delta_G_2 ./ kbT))
+        K[3] = exp.(- ((delta_G_3) ./ kbT))
+        K[4] = exp.(- ((delta_G_4) ./ kbT))
+        K[5] = exp.(- ((delta_G_5) ./ kbT))
+        K[6] = exp.(- ((delta_G_6) ./ kbT))
+        K[7] = exp.(- (delta_G_7 ./ kbT))
+        K[8] = exp.(- ((delta_G_8) ./ kbT))
+        K[9] = exp.(- ((delta_G_9) ./ kbT))
+        K[10] = exp.(- (delta_G_10 ./ kbT))
+        K[11] = exp.(- ((delta_G_11 ./ kbT)))
+        K[12] = exp.(- (delta_G_12 ./ kbT))
+        K[13] = exp.(- (delta_G_13 ./ kbT))
 
         k_neg = k_pos ./ K
 
@@ -115,14 +114,10 @@ for n = 1:num_points
         x_o2aq = 2.34 .* (10 .^ -5)
         x_h2o = 1
         x_h2o2 = 0
-        #for n = 1:26
-        #        if abs(k_init[n]>1e20)
-        #            k_init[n]=1e20
-        #        end
-        #    end
+
 
         #Creation of parameter object
-        p = p_base(k_init,x_o2aq,x_h2o,x_h2o2);
+        p = vcat(k_init,x_o2aq,x_h2o,x_h2o2);
 
         #Problem setup & Initial Conditions
         diff_variables = trues(10);
@@ -130,8 +125,6 @@ for n = 1:num_points
         diff_variables[10]=false
 
         tspan = (0,1.)
-        #println(k_init[11])
-        #println(k_init[24])
 
         u_0 = [1.,0.,0.0,0.0,0.0,0.0,0.0,1.,0.0,0.0]
         du_0 = [0.0,.1,-.1,.1,.1,.1,0.1,.1,0.1,0.1]
