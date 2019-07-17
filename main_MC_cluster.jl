@@ -5,7 +5,7 @@ using DelimitedFiles
 @everywhere include("rate_equations.jl")
 using SharedArrays
 
-@everywhere num_runs=100000
+@everywhere num_runs=10000
 @everywhere num_points=50
 o2dl=SharedArray{Float64,2}(num_points,num_runs)
 stara=SharedArray{Float64,2}(num_points,num_runs)
