@@ -1,7 +1,7 @@
 #Rate Equations
 #Alec Bills, June 10
 #Source: Hansen et. al 2014
-function rate_equations(out, du,u, k, t)
+function rate_equations(du,u, k, t)
 ##########################DECOMPOSE CONSTANTS#################################################
     #k's
     k_1=k[1];
@@ -74,17 +74,17 @@ function rate_equations(out, du,u, k, t)
 
 
 #######################OUTPUT EQUATIONS IN USABLE FORM (CONSTRUCT DIFFERENTIAL OUTPUT VECTOR) ########################
-    out[1]=dx_o2dldt-du[1]
-    out[2]=dtheta_starAdt-du[2]
+    du[1]=dx_o2dldt
+    du[2]=dtheta_starAdt
     #out[3]=dtheta_o2starAdt-du[3]
-    out[7]=u[2]+u[3]+u[4]+u[5]+u[6]+u[7]-1.0
-    out[4]=dtheta_oohstarAdt-du[4]
-    out[5]=dtheta_ostarAdt-du[5]
-    out[6]=dtheta_ohstarAdt-du[6]
-    out[3]=dtheta_h2o2starAdt-du[3]
+    du[7]=u[2]+u[3]+u[4]+u[5]+u[6]+u[7]-1.0
+    du[4]=dtheta_oohstarAdt
+    du[5]=dtheta_ostarAdt
+    du[6]=dtheta_ohstarAdt
+    du[3]=dtheta_h2o2starAdt
 
-    out[8]=dtheta_ohstarBdt-du[8]
-    out[9]=dtheta_ostarBdt-du[9]
-    out[10]=u[8]+u[9]+u[10]-1.0
+    du[8]=dtheta_ohstarBdt
+    du[9]=dtheta_ostarBdt
+    du[10]=u[8]+u[9]+u[10]-1.0
 
 end

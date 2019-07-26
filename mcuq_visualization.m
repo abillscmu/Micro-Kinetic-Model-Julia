@@ -1,5 +1,5 @@
 %% Monte Carlo UQ Data Visualization
-filepath = 'bigdata/';
+filepath = 'newdata/';
 
 %% Read Data
 o2dl=csvread([filepath 'o2dl.csv']);
