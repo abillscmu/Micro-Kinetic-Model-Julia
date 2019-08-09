@@ -3,6 +3,7 @@ using Sundials
 using Plots
 using LinearAlgebra
 include("rate_equations.jl")
+include("calc_ks.jl")
 bigPlot=true
 smallPlot=false
 
@@ -121,4 +122,5 @@ end
 #The initial input vector will be the dict of energies
 model = Chain(x -> x.^2,
              Dense(16,50,tanh),
+             Dense(50,50,tanh),
              Dense(50,10))

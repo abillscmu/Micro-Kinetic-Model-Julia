@@ -1,5 +1,5 @@
-%%Main Kinetic Rate Function 
-function main_matlab()
+%%Main Kinetic Rate Function
+function out = main_matlab()
 
 num_points=50;
 o2dl=zeros(num_points,1);
@@ -12,6 +12,7 @@ theta_h2o2starA=zeros(num_points,1);
 theta_ohstarB=zeros(num_points,1);
 theta_starB=zeros(num_points,1);
 theta_ostarB=zeros(num_points,1);
+
 
 
 U_vec = linspace(0.2,1,num_points);
@@ -27,108 +28,114 @@ kbT = kb .* T;
 kbTh = kbT ./ h;
 
 %Trib
-E = 0.26 + 0.05;
+E = 0.26;
 beta = 0.5;
 
-delta_G_1 = 0;
-delta_G_2 = -0.2 + 0.05;
-delta_G_3 = -.14 + 0.05;
-delta_G_4 = -1.35 + 0.05;
-delta_G_5 = -0.05 + 0.05;
-delta_G_6 = 0.15 + 0.05;
-delta_G_7 = -.93 + 0.05;
-delta_G_8 = -.38 + 0.05;
-delta_G_9 = -0.2 + 0.05;
-delta_G_10 = -0.83 + 0.05;
-delta_G_11 = 0.28 + 0.05;
-delta_G_12 = -1.49 + 0.05;
-delta_G_13 = 0.32 + 0.05;
+cH2O = 1e3./(16+((2*1.008)));
+kH_H2O=1.3e-3;
+dGO2solv=kbT*log(cH2O/kH_H2O);
+dGH2O2solv=kbT*log(cH2O);
+dGOH=0;
+U0=0.9;
+OHB_destabilization=0.36;
+Ob_destabilization=0.0;
+H2O2aq_corr=dGH2O2solv;
+O2ads_corr=0;
 
-
-G_0_3 = -0.9+delta_G_3;
-G_0_4 = -0.9+delta_G_4;
-G_0_5 = -0.9+delta_G_5;
-G_0_6 = -0.9+delta_G_6;
-G_0_8 = -0.9+delta_G_8;
-G_0_9 = -0.9+delta_G_9;
-G_0_11 = -0.9+delta_G_11;
-
-E_1 = 0;
-E_2 = 0;
-E_7 = 0.48 + 0.05;
-E_10 = 0.37 + 0.05;
-E_12 = 0.46 + 0.05;
-E_13 = 0;
-
-
-
-U_3 = -G_0_3;
-U_4 = -G_0_4;
-U_5 = -G_0_5;
-U_6 = -G_0_6;
-U_8 = -G_0_8;
-U_9 = -G_0_9;
-U_11 = -G_0_11;
-A = 1.0 .* (10 .^ 9);
+elements={'O2aq','O2dl','O2','OOH','O','OH','HOOH','Ob','OHb','H2O2aq',' ','b'};
+G_U0s_values = {1.32+dGO2solv,1.32+dGO2solv,1.392+(1.2*dGOH),1.25+dGOH,-0.14+0.04+2*dGOH,-0.15+dGOH,1.533+0.04*dGOH,0.5670+(2*dGOH),0.1979+dGOH,1.75+H2O2aq_corr,0,0,};
+G_U0s=containers.Map(elements,G_U0s_values);
+qs_values={-4,-4,-4,-3,-2,-1,-2,-2,-1,-2,0,0};
+qs = containers.Map(elements,qs_values);
+G_Us = containers.Map(elements,G_U0s_values);
 
 
 
 %Potential: Input
 for n = 1:num_points
-    U = U_vec(n);    
-    k_pos(1) = (8 .* (10 .^ 5)) .* exp(-E_1 ./ kbT );
-    k_pos(2) = (1 .* (10 .^ 8)) .* exp(-E_2 ./ kbT );    
-    k_pos(3) = A .* exp(- (E ./ kbT)) .* exp(- ((beta .* (U-U_3))) ./ kbT);
-    k_pos(4) = A .* exp(- (E ./ kbT)) .* exp(- ((beta .* (U-U_4))) ./ kbT);    
-    k_pos(5) = A .* exp(- (E ./ kbT)) .* exp(- ((beta .* (U-U_5))) ./ kbT);
-    k_pos(6) = A .* exp(- (E ./ kbT)) .* exp(- ((beta .* (U-U_6))) ./ kbT);   
-    k_pos(7) = kbTh .* exp(-E_7 ./ kbT);
-    k_pos(8) = A .* exp(- (E ./ kbT)) .* exp(- ((beta .* (U-U_8))) ./ kbT);   
-    k_pos(9) = A .* exp(- (E ./ kbT)) .* exp(- ((beta .* (U-U_9))) ./ kbT);
-    k_pos(10) = kbTh .* exp(-E_10 ./ kbT);    
-    k_pos(11) = A .* exp(- (E ./ kbT)) .* exp(- ((beta .* (U-U_11))) ./ kbT);
-    k_pos(12) = kbTh .* exp(-E_12./ kbT);    
-    k_pos(13) = (1.00 .* (10 .^ 8)) .* exp(-E_13 ./ kbT);
+    U = U_vec(n);
+    deltaU = U-U0;
+    for i=1:length(G_Us)
+        G_Us(elements{i}) = G_U0s(elements{i})+(qs(elements{i})*deltaU);
+    end
+    
+    delta_G_1 = G_Us('O2dl')-G_Us('O2aq');
+    delta_G_2 = G_Us('O2')-G_Us('O2dl');
+    delta_G_3 = G_Us('OOH')-G_Us('O2');
+    delta_G_4 = G_Us('O')-G_Us('OOH');
+    delta_G_5 = G_Us('OH')-G_Us('O');
+    delta_G_6 = G_Us(' ')-G_Us('OH');
+    delta_G_7 = G_Us('O')+G_Us('Ob')-G_Us('O2');
+    delta_G_8 = G_Us('OHb')-G_Us('Ob');
+    delta_G_9 = G_Us('b')-G_Us('OHb');
+    delta_G_10 = G_Us('Ob')+G_Us('OH')-G_Us('OOH');
+    delta_G_11 = G_Us('HOOH')-G_Us('OOH');
+    delta_G_12 = G_Us('OH')+G_Us('OHb')-G_Us('HOOH');
+    delta_G_13 = G_Us('H2O2aq')-G_Us('HOOH');
+    
+    beta = 1. / ( kbT );
+    
+    f0 = exp(-beta * 0.2244);
+    f1 = 1;
+    s2 = exp(-beta * 0.05916);
+    s3 = 1.;
+    s4 = 1.;
+    s13 = s2;
+    
+    k_pos(1) = (8 .* (10 .^ 5));
+    k_pos(2) = kbTh *f0 *s2 * min(1.,exp(-beta*delta_G_2));
+    k_pos(3) = kbTh * f0 * s3 * min(1.,exp( - beta * ( 0.26 + 0.5 * delta_G_3 ) ));
+    k_pos(4) = kbTh * f0 * s4 * min(1.,exp( - beta * ( 0.26 + 0.5 * delta_G_4 ) ));
+    k_pos(5) = kbTh * f0 * min(1.,exp( - beta * ( 0.26 + 0.5 * delta_G_5 ) ));
+    k_pos(6) = kbTh * f0 * min(1.,exp( - beta * ( 0.26 + 0.5 * delta_G_6 ) ));
+    k_pos(7) = kbTh * min(1.,exp( - beta * ( 0.48 + 0.69 * ( 0.9255 + delta_G_7) ) ));
+    k_pos(8) = kbTh * f0 * min(1.,exp( - beta * ( 0.26 + 0.5 * delta_G_8 ) ));
+    k_pos(9) = kbTh * f0 * min(1.,exp( - beta * ( 0.26 + 0.5 * delta_G_9 ) ));
+    k_pos(10) = kbTh * min(1.,exp( - beta * ( 0.37 + 0.39 * (0.8330 + delta_G_10) ) ));
+    k_pos(11) = kbTh * f0 * min(1.,exp( - beta * ( 0.26 + 0.5 * delta_G_11 ) ));
+    k_pos(12) =  kbTh * min(1.,exp( - beta * ( 0.462 + 0.19 * (1.4853 + delta_G_12) ) ));
+    k_pos(13) = kbTh * s13 * f0 * min(1.,exp( - beta * ( delta_G_13 ) ));
+    
     K(1) = exp(- (delta_G_1 ./ kbT));
-    K(2) = exp(- (delta_G_2 ./ kbT));    
-    K(3) = exp(- ((G_0_3+U) ./ kbT));
-    K(4) = exp(- ((G_0_4+U) ./ kbT));    
-    K(5) = exp(- ((G_0_5+U) ./ kbT));
-    K(6) = exp(- ((G_0_6+U) ./ kbT));    
-    K(7) = exp(- (delta_G_3 ./ kbT));
-    K(8) = exp(- ((G_0_8+U) ./ kbT));    
-    K(9) = exp(- ((G_0_9+U) ./ kbT));
-    K(10) = exp(- (delta_G_10 ./ kbT));    
-    K(11) = exp(- ((G_0_11+U) ./ kbT));
-    K(12) = exp(- (delta_G_12 ./ kbT));    
+    K(2) = exp(- (delta_G_2 ./ kbT));
+    K(3) = exp(- ((delta_G_3) ./ kbT));
+    K(4) = exp(- ((delta_G_4) ./ kbT));
+    K(5) = exp(- ((delta_G_5) ./ kbT));
+    K(6) = exp(- ((delta_G_6) ./ kbT));
+    K(7) = exp(- (delta_G_7 ./ kbT));
+    K(8) = exp(- ((delta_G_8) ./ kbT));
+    K(9) = exp(- ((delta_G_9) ./ kbT));
+    K(10) = exp(- (delta_G_10 ./ kbT));
+    K(11) = exp(- ((delta_G_11 ./ kbT)));
+    K(12) = exp(- (delta_G_12 ./ kbT));
     K(13) = exp(- (delta_G_13 ./ kbT));
     
-    k_neg = k_pos ./ K;    
+    k_neg = k_pos ./ K;
     k_init = vertcat(k_pos,k_neg);
-    x_o2aq = 2.34 .* (10 .^ -5);    
+    x_o2aq = 2.34 .* (10 .^ -5);
     x_h2o = 1;
     x_h2o2 = 0;
     
     %Creation of parameter object
-    p.k = k_init;    
+    p.k = k_init;
     p.x_o2aq = x_o2aq;
-    p.x_h2o = x_h2o;    
+    p.x_h2o = x_h2o;
     p.x_h2o2 = x_h2o2;
     
     %Problem setup & Initial Conditions
-    diff_variables = ones(10,1);    
+    diff_variables = ones(10,1);
     diff_variables(7)=0;
-    diff_variables(10)=0;   
+    diff_variables(10)=0;
     M = diag(diff_variables);
     
     %MATLAB DAE Interface
     options = odeset('Mass',M);
-    tspan = [0 0.1];
+    tspan = [0 11];
     %println(k_init(11))
     %println(k_init(24))
     u_0 = [0.01,1.,0.0,0.0,0.0,0.0,0.0,1.,0.0,0.0]';
     prob = @(t,y)rate_equations(t,y,p);
-    [t,y] = ode15s(prob,tspan,u_0,options);
+    [t,y] = ode23t(prob,tspan,u_0,options);
     
     o2dl(n) = y(end,1);
     stara(n) = y(end,2);
@@ -141,22 +148,22 @@ for n = 1:num_points
     theta_starB(n) = y(end,10);
     theta_ostarB(n) = y(end,9);
     
-
+    
     %Solve and extract outputs
     
 end
-
-%{
 figure(1)
 clf
-semilogy(U_vec,o2dl);
+semilogy(U_vec,o2dl)
 hold on
 semilogy(U_vec,stara);
 semilogy(U_vec,o2stara);
 semilogy(U_vec,theta_oohstarA);
-semilogy(U_vec,theta_ostarA);
+semilogy(U_vec,theta_ostarA)
 semilogy(U_vec,theta_ohstarA);
 semilogy(U_vec,theta_h2o2starA);
-legend({'o2dl','stara','o2stara','oohstara','ostarA','ohstarA','h2o2starA'});
-%}
+legend({'o2dl','stara','o2stara','theta_oohstara','theta_ostarA','theta_ohstara','theta_h2o2stara'})
+
+out=0;
+end
 

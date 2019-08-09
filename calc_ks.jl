@@ -2,12 +2,31 @@
 using Random
 function calc_ks(params3;mc=false,seed=0)
 U = params3[1]
+k_pos=zeros(13)
+K=zeros(13)
 if(mc)
     rng=MersenneTwister(seed)
     rnd=0.05 .* randn(rng,12)
     params3[2:end]=params3[2:end] .+ rnd;
 end
+kb = 8.617 .* (10 .^ -5)
+T = 298
+h=4.14e-15
+beta = 0.5
+kbT = kb .* T
+kbTh = kbT ./ h
+E = 0.26
 
+cH2O = 1e3/(16. + (2*1.008))
+kH_H2O = 1.3e-3
+dGO2solv = kbT*log(cH2O/kH_H2O)
+dGH2O2solv = kbT*log(cH2O)
+dGOH=0
+U0 = 0.9 #Potential at which other energies are defined
+OHB_destabilization = 0.26+0.1 #*b destabilization energies (Tripkovic et al)
+Ob_destabilization = 0.0#see above
+H2O2aq_corr = dGH2O2solv
+O2ads_corr=0.0
 
 
 indices = Dict("O2aq"=>1,"O2dl"=>2,"O2"=>3,"OOH"=>4,"O"=>5,"OH"=>6,"HOOH"=>7,"Ob"=>8,"OHb"=>9,"H2O2aq"=>10 ," "=>11,"b"=>12)
