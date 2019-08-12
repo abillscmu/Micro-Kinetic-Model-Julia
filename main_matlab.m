@@ -117,10 +117,7 @@ for n = 1:num_points
     x_h2o2 = 0;
     
     %Creation of parameter object
-    p.k = k_init;
-    p.x_o2aq = x_o2aq;
-    p.x_h2o = x_h2o;
-    p.x_h2o2 = x_h2o2;
+    p=[k_init;x_o2aq;x_h2o;x_h2o2];
     
     %Problem setup & Initial Conditions
     diff_variables = ones(10,1);
@@ -130,12 +127,14 @@ for n = 1:num_points
     
     %MATLAB DAE Interface
     options = odeset('Mass',M);
-    tspan = [0 11];
+    tspan = [0 10];
     %println(k_init(11))
     %println(k_init(24))
     u_0 = [0.01,1.,0.0,0.0,0.0,0.0,0.0,1.,0.0,0.0]';
     prob = @(t,y)rate_equations(t,y,p);
-    [t,y] = ode23t(prob,tspan,u_0,options);
+    tic
+    [t,y] = ode15s(prob,tspan,u_0,options);
+    toc
     
     o2dl(n) = y(end,1);
     stara(n) = y(end,2);
@@ -152,6 +151,7 @@ for n = 1:num_points
     %Solve and extract outputs
     
 end
+%{
 figure(1)
 clf
 semilogy(U_vec,o2dl)
@@ -164,6 +164,8 @@ semilogy(U_vec,theta_ohstarA);
 semilogy(U_vec,theta_h2o2starA);
 legend({'o2dl','stara','o2stara','theta_oohstara','theta_ostarA','theta_ohstara','theta_h2o2stara'})
 
+
+%}
 out=0;
 end
 

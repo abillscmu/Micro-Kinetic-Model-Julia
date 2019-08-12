@@ -135,7 +135,7 @@ for n = 1:num_points
         MM=Diagonal(mm);
         func = ODEFunction(rate_equations,mass_matrix=MM)
         prob = ODEProblem(func,u_0,tspan,p)
-        sol = solve(prob,Rodas4())
+        @time sol = solve(prob,Rodas4())
 
         o2dl[n]=sol.u[end][1]
         stara[n]=sol.u[end][2]

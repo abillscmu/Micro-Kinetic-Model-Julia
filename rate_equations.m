@@ -1,9 +1,8 @@
 %Rate Equations
 %Alec Bills, June 10
 %Source: Hansen et. al 2014
-function out = rate_equations(t,u,p)
+function out = rate_equations(t,u,k)
 %%%%%%%%%%%%%%%%%%%%%%%%%%DECOMPOSE CONSTANTS%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    k=p.k;
     %k's
     k_1=k(1);
     k_2=k(2);
@@ -33,9 +32,9 @@ function out = rate_equations(t,u,p)
     k_m13=k(26);
     
     %x's
-    x_o2aq=p.x_o2aq;
-    x_h2o=p.x_h2o;
-    x_h2o2=p.x_h2o2;
+    x_o2aq=k(27);
+    x_h2o=k(28);
+    x_h2o2=k(29);
     
 %%%%%%%%%%%%%%%%%%%%%%%%%DECOMPOSE PARAMETERS IN THE SOLUTION%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     x_o2dl=u(1);
