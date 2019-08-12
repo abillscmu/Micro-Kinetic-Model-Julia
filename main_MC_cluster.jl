@@ -5,11 +5,13 @@
 using DelimitedFiles
 @everywhere include("rate_equations.jl")
 @everywhere include("calc_ks.jl")
-@everywhere include("initialize.jl")
 using SharedArrays
 
 @everywhere num_runs=1000
 @everywhere num_points=50
+
+@everywhere include("initialize.jl")
+
 o2dl=SharedArray{Float64,2}(num_points,num_runs)
 stara=SharedArray{Float64,2}(num_points,num_runs)
 o2stara=SharedArray{Float64,2}(num_points,num_runs)
@@ -21,10 +23,6 @@ theta_ohstarB=SharedArray{Float64,2}(num_points,num_runs)
 theta_starB=SharedArray{Float64,2}(num_points,num_runs)
 theta_ostarB=SharedArray{Float64,2}(num_points,num_runs)
 timetrack=SharedArray{Float64,2}(num_points,num_runs)
-
-
-    #Potential: Input
-U_vec = range(0.2,stop=1,length=num_points);
 
 #Potential: Input
 @sync @distributed for r=1:num_runs
