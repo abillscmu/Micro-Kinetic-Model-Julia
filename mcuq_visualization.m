@@ -24,7 +24,7 @@ plottinginterval(theta_oohstarA,'c',1,'oohstara')
 plottinginterval(theta_ostarA,'m',1,'ostara')
 plottinginterval(theta_ohstarA,'y',1,'ohstara')
 plottinginterval(theta_h2o2starA,'k',1,'h2o2stara')
-title('Monte Carlo UQ');
-ylabel('Theta')
-xlabel('U')
-set(gca,'FontSize',20)
+title('Monte Carlo UQ for MKM');
+ylabel('Surface Coverage')
+xlabel('Voltage')
+set(gca,'FontSize',20,'FontName','Palatino','FontWeight','Bold')

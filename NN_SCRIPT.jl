@@ -17,7 +17,7 @@ model = Chain(Dense(13,50),Dense(50,50),Dense(50,10),softmax)
 loss(x,y)=Flux.mse(model(x),y)
 
 x_data,y_data = generate_test_data(num_points)
-data=[(x_data,y_data)]
+data=[(x_data,log10.(y_data))]
 ps=Flux.params(model)
 
 cb() = println("Training!")

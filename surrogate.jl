@@ -3,27 +3,68 @@ using Flux
 using LinearAlgebra
 using Random
 using Distributions
+using Statistics
 
 include("kinetic_rate_out.jl")
 include("calc_ks.jl")
 include("generate_test_data.jl")
 include("rate_equations.jl")
 
+#Number of data points on which to train
 num_points=100000
 
 
-#The initial input vector will be the dict of energies
-model = Chain(Dense(13,50),Dense(50,50),Dense(50,10))
+#Create Model
+model = Chain(Dense(13,12,tanh),Dense(12,12,tanh),Dense(12,11,tanh),Dense(11,10,tanh))
+
+#Define Loss Function
 loss(x,y)=Flux.mse(model(x),y)
 
+#Generate Test Data
 x_data,y_data = generate_test_data(num_points)
-y_data=y_data
 
-data=[(x_data,y_data)]
+#Condition Data for NN
+
+#Log y data
+y_data=log10.(y_data)
+
+#Standardize Outputs
+y_data_standardized = similar(y_data)
+
+#Preallocate to save later
+y_mean_vec = zeros(Float32,size(y_data)[1])
+y_std_vec = ones(Float32,size(y_data)[1])
+
+for n = 1:size(y_data)[1]
+    y_mean_vec[n] = mean(y_data[n,:])
+    y_std_vec[n] = std(y_data[n,:])
+    y_data_standardized[n,:] = (y_data[n,:] .- y_mean_vec[n]) ./ y_std_vec[n];
+end
+
+#Standardize Inputs
+x_data_standardized = similar(x_data)
+
+#need to preallocate to save later
+x_mean_vec=zeros(Float32,size(x_data)[1])
+x_std_vec = ones(Float32,size(x_data)[1])
+
+for n = 1:size(x_data)[1]
+    if(n<12)
+        x_mean_vec[n]=mean(x_data[n,:])
+        x_std_vec[n] = std(x_data[n,:])
+    end
+    x_data_standardized[n,:] = (x_data[n,:] .- x_mean_vec[n]) ./ x_std_vec[n]
+end
+
+
+
+data=[(x_data_standardized,y_data_standardized)]
 ps=Flux.params(model)
 
-using Flux: @epochs
-@epochs 10000 Flux.train!(loss,ps,data,ADAM(0.001),cb = () -> println("training"))
+evalcb() = @show(loss(x_data_standardized[:,25],y_data_standardized[:,25]))
+
+using Flux: @epochs, throttle
+@epochs 500 Flux.train!(loss,ps,data,ADAM(0.001),cb = throttle(evalcb,5))
 
 
 
@@ -31,7 +72,7 @@ using Plots
 
 include("rate_equations.jl")
 include("calc_ks.jl")
-bigPlot=false
+bigPlot=true
 smallPlot=true
 
 
@@ -113,19 +154,23 @@ for n = 1:num_points
         theta_starB[n]=ground_truth[10]
         theta_ostarB[n]=ground_truth[9]
 
-        nn_prediction=Tracker.data(model(vcat(U,g_0s)))
+        test_x_data = vcat(U,g_0s)
+        test_x_data_standardized = (test_x_data .- x_mean_vec) ./ x_std_vec
+        nn_prediction=Tracker.data(model(test_x_data_standardized))
+        #Destandardize Y Data
+        nn_prediction = (nn_prediction .* y_std_vec) .+ y_mean_vec
 
-        o2dl_surr[n]=nn_prediction[1]
-        stara_surr[n]=nn_prediction[2]
-        o2stara_surr[n]=nn_prediction[7]
-        theta_oohstarA_surr[n]=nn_prediction[4]
-        theta_ostarA_surr[n]=nn_prediction[5]
-        theta_ohstarA_surr[n]=nn_prediction[6]
-        theta_h2o2starA_surr[n]=nn_prediction[3]
+        o2dl_surr[n]=10 .^ nn_prediction[1]
+        stara_surr[n]=10 .^ nn_prediction[2]
+        o2stara_surr[n]=10 .^ nn_prediction[7]
+        theta_oohstarA_surr[n]=10 .^ nn_prediction[4]
+        theta_ostarA_surr[n]=10 .^ nn_prediction[5]
+        theta_ohstarA_surr[n]=10 .^ nn_prediction[6]
+        theta_h2o2starA_surr[n]=10 .^ nn_prediction[3]
 
-        theta_ohstarB_surr[n]=nn_prediction[8]
-        theta_starB_surr[n]=nn_prediction[10]
-        theta_ostarB_surr[n]=nn_prediction[9]
+        theta_ohstarB_surr[n]=10 .^ nn_prediction[8]
+        theta_starB_surr[n]=10 .^ nn_prediction[10]
+        theta_ostarB_surr[n]=10 .^ nn_prediction[9]
 
 end
 
@@ -155,7 +200,7 @@ if(smallPlot)
     plot!(U_vec,stara_surr,lw=3,label="*a",color=:red,linestyle = :dot)
     plot!(U_vec,theta_ostarA_surr,lw=3,label="o*a",color=:purple,linestyle = :dot)
     plot!(U_vec,theta_ohstarA_surr,lw=3,label="oh*a",color=:gold,linestyle = :dot)
-    #savefig("SmallPlot.png")
+    savefig("SmallPlot.png")
 end
 #Parameter Structure: [G_U0s, Voltage]
 
