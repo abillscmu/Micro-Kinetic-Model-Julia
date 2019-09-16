@@ -13,9 +13,15 @@ include("rate_equations.jl")
 #Number of data points on which to train
 num_points=100000
 
+#Number of Epochs
+num_epochs = 500
+
+loss_arr = Float32[]
+
 
 #Create Model
-model = Chain(Dense(13,12,tanh),Dense(12,12,tanh),Dense(12,11,tanh),Dense(11,10,tanh))
+#PASS INITIAL CONDITIONS
+model = Chain(Dense(13,12,tanh),Dense(12,11,tanh),Dense(11,10,tanh))
 
 #Define Loss Function
 loss(x,y)=Flux.mse(model(x),y)
@@ -60,20 +66,24 @@ end
 
 data=[(x_data_standardized,y_data_standardized)]
 ps=Flux.params(model)
+n=0
+evalcb() =     append!(loss_arr,Tracker.data(loss(x_data_standardized[:,25],y_data_standardized[:,25])))
 
-evalcb() = @show(loss(x_data_standardized[:,25],y_data_standardized[:,25]))
+
 
 using Flux: @epochs, throttle
-@epochs 500 Flux.train!(loss,ps,data,ADAM(0.001),cb = throttle(evalcb,5))
+@epochs num_epochs Flux.train!(loss,ps,data,ADAM(0.001),cb = throttle(evalcb,5))
 
 
 
 using Plots
+pyplot()
 
 include("rate_equations.jl")
 include("calc_ks.jl")
 bigPlot=true
 smallPlot=true
+convergePlot=true
 
 
 num_points=50
@@ -175,6 +185,7 @@ for n = 1:num_points
 end
 
 if(bigPlot)
+    PyPlot.figure(1)
     plot(U_vec,o2dl,yscale=:log10,lw=3,label="o2dl",color=:green)
     plot!(U_vec,stara,yscale=:log10,lw=3,label="*a",color=:red)
     plot!(U_vec,o2stara,yscale=:log10,lw=3,label="o2*a",color=:blue)
@@ -190,9 +201,9 @@ if(bigPlot)
     plot!(U_vec,theta_ostarA_surr,yscale=:log10,lw=3,label="o*a",color=:purple,linestyle = :dot)
     plot!(U_vec,theta_ohstarA_surr,yscale=:log10,lw=3,label="oh*a",color=:gold,linestyle = :dot)
     plot!(U_vec,theta_h2o2starA_surr,yscale=:log10,lw=3,label="h2o2*a",legend=:bottomleft,color=:black,linestyle = :dot)
-    savefig("BigPlot.png")
 end
 if(smallPlot)
+    PyPlot.figure(2)
     plot(U_vec,stara,lw=3,label="*a",color=:red)
     plot!(U_vec,theta_ostarA,lw=3,label="o*a",color=:purple)
     plot!(U_vec,theta_ohstarA,lw=3,label="oh*a",color=:gold)
@@ -200,8 +211,8 @@ if(smallPlot)
     plot!(U_vec,stara_surr,lw=3,label="*a",color=:red,linestyle = :dot)
     plot!(U_vec,theta_ostarA_surr,lw=3,label="o*a",color=:purple,linestyle = :dot)
     plot!(U_vec,theta_ohstarA_surr,lw=3,label="oh*a",color=:gold,linestyle = :dot)
-    savefig("SmallPlot.png")
 end
-#Parameter Structure: [G_U0s, Voltage]
-
-#The initial input vector will be the dict of energies
+if(convergePlot)
+    PyPlot.figure(3)
+    plot(loss_arr)
+end
